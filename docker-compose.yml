@@ -1,0 +1,21 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: jenkins-ci
+    privileged: true  # даёт доступ к Docker-in-Docker (альтернатива — сокет)
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock  # <-- КЛЮЧЕВОЙ МОМЕНТ
+      - /usr/bin/docker:/usr/bin/docker
+    networks:
+      - ci-cd-net
+
+networks:
+  ci-cd-net:
+    driver: bridge
